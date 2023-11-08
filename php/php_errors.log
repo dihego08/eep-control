@@ -1,0 +1,6 @@
+[08-Nov-2023 17:39:50 America/Lima] PHP Fatal error:  Class 'clsEpp' not found in C:\inetpub\wwwroot\dashmin-1.0.0\php\services.php on line 3
+[08-Nov-2023 17:40:40 America/Lima] PHP Fatal error:  Class 'clsEpp' not found in C:\inetpub\wwwroot\dashmin-1.0.0\php\services.php on line 3
+[08-Nov-2023 17:41:18 America/Lima] PHP Warning:  PDO::__construct(): Server sent charset (255) unknown to the client. Please, report to the developers in C:\inetpub\wwwroot\dashmin-1.0.0\php\env.php on line 10
+[08-Nov-2023 17:41:45 America/Lima] PHP Warning:  PDO::__construct(): Server sent charset (255) unknown to the client. Please, report to the developers in C:\inetpub\wwwroot\dashmin-1.0.0\php\env.php on line 10
+[08-Nov-2023 17:42:09 America/Lima] PHP Warning:  PDO::__construct(): Server sent charset (255) unknown to the client. Please, report to the developers in C:\inetpub\wwwroot\dashmin-1.0.0\php\env.php on line 10
+[08-Nov-2023 17:44:19 America/Lima] PHP Warning:  PDO::__construct(): Server sent charset (255) unknown to the client. Please, report to the developers in C:\inetpub\wwwroot\dashmin-1.0.0\php\env.php on line 10
