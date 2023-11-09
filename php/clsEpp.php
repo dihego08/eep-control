@@ -5,6 +5,7 @@ error_reporting(E_ALL);*/
 require_once "env.php";
 class clsEpp
 {
+    private $mbd;
     function __construct()
     {
         $this->mbd = new Connection;
