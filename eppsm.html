@@ -130,7 +130,7 @@
                         <div class="bg-light rounded h-100 p-4">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-4">Listado Epps</h6>
+                                    <h6 class="mb-4">Listado Movimientos Epps</h6>
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <span class="btn btn-outline-success" data-bs-toggle="modal"
@@ -143,7 +143,12 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Descripción</th>
-                                            <th scope="col">Stock</th>
+                                            <th scope="col">Tipo Movimiento</th>
+                                            <th scope="col">Fecha</th>
+                                            <th scope="col">Stock Inicial</th>
+                                            <th scope="col">Cantidad</th>
+                                            <th scope="col">Stock Final</th>
+                                            <th scope="col">Usuario Recepciona</th>
                                             <th scope="col" class="text-center">Acciones</th>
                                         </tr>
                                     </thead>
@@ -184,7 +189,7 @@
         <div class="modal-dialog" role="document" style="max-width: 45%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Formulario EPP</h3>
+                    <h3 class="modal-title" id="exampleModalLabel">Formulario Salida EPP</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -192,12 +197,30 @@
                         <div class="form-row">
                             <div class="col-12 forn-row" id="myelement">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="descripcion" placeholder="Nombre Epp">
-                                    <label for="descripcion">Descripción</label>
+                                    <select class="form-select" id="id_epp">
+                                        <option value="0">--SELECCIONA--</option>
+                                    </select>
+                                    <label for="id_epp">Seleccionar Epp</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="stock" placeholder="Ex: 1">
-                                    <label for="stock">Stock Inicial</label>
+                                    <select class="form-select" id="id_tipo_movimiento">
+                                        <option value="0">--SELECCIONA--</option>
+                                    </select>
+                                    <label for="id_tipo_movimiento">Seleccionar Tipo Movimiento</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="id_personal">
+                                        <option value="0">--SELECCIONA--</option>
+                                    </select>
+                                    <label for="id_personal">Seleccionar Usuario Recepciona</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control" id="fecha" placeholder="Nombre Epp">
+                                    <label for="fecha">Fecha</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="cantidad" placeholder="Nombre Epp">
+                                    <label for="cantidad">Cantidad</label>
                                 </div>
                             </div>
                         </div>
@@ -205,7 +228,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row">
-                        <span class="btn btn-outline-success" id="btn-accion-epp">
+                        <span class="btn btn-outline-success" id="btn-accion-movimientos-epp">
                             <i class="fas fa-check"></i> Guardar
                         </span>
                     </div>
@@ -232,14 +255,43 @@
 
     <script>
         function lista_epps() {
-            $("#table-epps").find("tbody").empty();
             $.post("php/services.php?accion=lista_epps", function (responseText) {
+                var obj = JSON.parse(responseText);
+                $.each(obj, function (index, val) {
+                    $("#id_epp").append(`<option value="${val.id}">${val.descripcion}</option>`);
+                });
+            });
+        }
+        function lista_tipos_movimientos() {
+            $.post("php/services.php?accion=lista_tipos_movimientos", function (responseText) {
+                var obj = JSON.parse(responseText);
+                $.each(obj, function (index, val) {
+                    $("#id_tipo_movimiento").append(`<option value="${val.id}">${val.descripcion}</option>`);
+                });
+            });
+        }
+        function lista_personal(){
+            $.post("php/services.php?accion=lista_personal", function (responseText) {
+                var obj = JSON.parse(responseText);
+                $.each(obj, function (index, val) {
+                    $("#id_personal").append(`<option value="${val.id}">${val.nombres}</option>`);
+                });
+            });
+        }
+        function lista_movimientos_epp() {
+            $("#table-epps").find("tbody").empty();
+            $.post("php/services.php?accion=lista_movimientos_epp", function (responseText) {
                 var obj = JSON.parse(responseText);
                 $.each(obj, function (index, val) {
                     $("#table-epps").find("tbody").append(`<tr>
                         <th scope="row">${val.id}</th>
-                        <td>${val.descripcion}</td>
-                        <td>${val.stock}</td>
+                        <td>${val.epp}</td>
+                        <td>${val.tipo_movimiento}</td>
+                        <td>${val.fecha}</td>
+                        <td>${val.stock_inicial}</td>
+                        <td>${val.cantidad}</td>
+                        <td>${val.stock_final}</td>
+                        <td>${val.nombres}</td>
                         <td class="text-center">
                             <div class="form-group">
                                 <span class="btn btn-outline-warning btn-square" onclick="editar_epp(${val.id})" data-bs-toggle="modal"
@@ -256,33 +308,41 @@
             });
         }
         $(document).ready(function () {
+            lista_movimientos_epp();
             lista_epps();
+            lista_personal();
+            lista_tipos_movimientos();
             limpiar();
         });
-        function guardar_epp() {
-            $.post("php/services.php?accion=guardar_epp", {
-                descripcion: $("#descripcion").val(),
-                stock: $("#stock").val(),
+        function guardar_movimiento_epp() {
+            $.post("php/services.php?accion=guardar_movimiento_epp", {
+                id_epp: $("#id_epp").val(),
+                id_personal: $("#id_personal").val(),
+                fecha: $("#fecha").val(),
+                cantidad: $("#cantidad").val(),
+                id_tipo_movimiento: $("#id_tipo_movimiento").val()
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_epps();
+                    lista_movimientos_epp();
                 } else {
 
                 }
             });
         }
         function limpiar() {
-            $("#btn-accion-epp").attr("onclick", "guardar_epp();");
-            $("#btn-accion-epp").empty();
-            $("#btn-accion-epp").append('<i class="fas fa-plus"></i> Guardar');
-            $("#descripcion").val('');
-            $("#stock").val('');
+            $("#btn-accion-movimientos-epp").attr("onclick", "guardar_movimiento_epp();");
+            $("#btn-accion-movimientos-epp").empty();
+            $("#btn-accion-movimientos-epp").append('<i class="fas fa-plus"></i> Guardar');
+            $("#id_epp").val(0);
+            $("#id_personal").val(0);
+            $("#cantidad").val('');
+            $("#fecha").val('');
         }
         function editar_epp(id) {
-            $("#btn-accion-epp").attr("onclick", "actualizar_epp(" + id + ");");
-            $("#btn-accion-epp").empty();
-            $("#btn-accion-epp").append('<i class="fas fa-check"></i> Actualizar');
+            $("#btn-accion-movimientos-epp").attr("onclick", "actualizar_epp(" + id + ");");
+            $("#btn-accion-movimientos-epp").empty();
+            $("#btn-accion-movimientos-epp").append('<i class="fas fa-check"></i> Actualizar');
             $.post("php/services.php?accion=editar_epp", {
                 id: id,
             }, function (responseText) {
@@ -299,7 +359,7 @@
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_epps();
+                    lista_movimientos_epp();
                     limpiar();
                 } else {
 
@@ -314,7 +374,7 @@
                     }, function (responseText) {
                         var obj = JSON.parse(responseText);
                         if (obj.Result == "OK") {
-                            lista_epps();
+                            lista_movimientos_epp();
                         } else {
 
                         }

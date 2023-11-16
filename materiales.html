@@ -79,16 +79,6 @@
                             <a href="puestos.html" class="dropdown-item">Puestos de Trabajo</a>
                         </div>
                     </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i
-                                class="fa fa-laptop me-2"></i>Movimientos</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="eppsm.html" class="dropdown-item">Epps</a>
-                            <a href="equiposm.html" class="dropdown-item">Equipos</a>
-                            <a href="materialesm.html" class="dropdown-item">Materiales</a>
-                            <a href="herramientasm.html" class="dropdown-item">Herramientas</a>
-                        </div>
-                    </div>
                 </div>
             </nav>
         </div>
@@ -130,7 +120,7 @@
                         <div class="bg-light rounded h-100 p-4">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-4">Listado Epps</h6>
+                                    <h6 class="mb-4">Listado Materiales</h6>
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <span class="btn btn-outline-success" data-bs-toggle="modal"
@@ -138,7 +128,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table class="table" id="table-epps">
+                                <table class="table" id="table-materiales">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
@@ -184,7 +174,7 @@
         <div class="modal-dialog" role="document" style="max-width: 45%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Formulario EPP</h3>
+                    <h3 class="modal-title" id="exampleModalLabel">Formulario Materiales</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -192,7 +182,7 @@
                         <div class="form-row">
                             <div class="col-12 forn-row" id="myelement">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="descripcion" placeholder="Nombre Epp">
+                                    <input type="text" class="form-control" id="descripcion" placeholder="Nombre Material">
                                     <label for="descripcion">Descripción</label>
                                 </div>
                                 <div class="form-floating mb-3">
@@ -205,7 +195,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row">
-                        <span class="btn btn-outline-success" id="btn-accion-epp">
+                        <span class="btn btn-outline-success" id="btn-accion-material">
                             <i class="fas fa-check"></i> Guardar
                         </span>
                     </div>
@@ -231,22 +221,22 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        function lista_epps() {
-            $("#table-epps").find("tbody").empty();
-            $.post("php/services.php?accion=lista_epps", function (responseText) {
+        function lista_materiales() {
+            $("#table-materiales").find("tbody").empty();
+            $.post("php/services.php?accion=lista_materiales", function (responseText) {
                 var obj = JSON.parse(responseText);
                 $.each(obj, function (index, val) {
-                    $("#table-epps").find("tbody").append(`<tr>
+                    $("#table-materiales").find("tbody").append(`<tr>
                         <th scope="row">${val.id}</th>
                         <td>${val.descripcion}</td>
                         <td>${val.stock}</td>
                         <td class="text-center">
                             <div class="form-group">
-                                <span class="btn btn-outline-warning btn-square" onclick="editar_epp(${val.id})" data-bs-toggle="modal"
+                                <span class="btn btn-outline-warning btn-square" onclick="editar_material(${val.id})" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">
                                     <i class="fas fa-edit"></i>
                                 </span>
-                                <span class="btn btn-outline-danger btn-square" onclick="eliminar_epp(${val.id})">
+                                <span class="btn btn-outline-danger btn-square" onclick="eliminar_material(${val.id})">
                                     <i class="fas fa-trash"></i>
                                 </span>
                             </div>
@@ -256,34 +246,34 @@
             });
         }
         $(document).ready(function () {
-            lista_epps();
+            lista_materiales();
             limpiar();
         });
-        function guardar_epp() {
-            $.post("php/services.php?accion=guardar_epp", {
+        function guardar_material() {
+            $.post("php/services.php?accion=guardar_material", {
                 descripcion: $("#descripcion").val(),
                 stock: $("#stock").val(),
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_epps();
+                    lista_materiales();
                 } else {
 
                 }
             });
         }
         function limpiar() {
-            $("#btn-accion-epp").attr("onclick", "guardar_epp();");
-            $("#btn-accion-epp").empty();
-            $("#btn-accion-epp").append('<i class="fas fa-plus"></i> Guardar');
+            $("#btn-accion-material").attr("onclick", "guardar_material();");
+            $("#btn-accion-material").empty();
+            $("#btn-accion-material").append('<i class="fas fa-plus"></i> Guardar');
             $("#descripcion").val('');
             $("#stock").val('');
         }
-        function editar_epp(id) {
-            $("#btn-accion-epp").attr("onclick", "actualizar_epp(" + id + ");");
-            $("#btn-accion-epp").empty();
-            $("#btn-accion-epp").append('<i class="fas fa-check"></i> Actualizar');
-            $.post("php/services.php?accion=editar_epp", {
+        function editar_material(id) {
+            $("#btn-accion-material").attr("onclick", "actualizar_material(" + id + ");");
+            $("#btn-accion-material").empty();
+            $("#btn-accion-material").append('<i class="fas fa-check"></i> Actualizar');
+            $.post("php/services.php?accion=editar_material", {
                 id: id,
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
@@ -291,30 +281,30 @@
                 $("#stock").val(obj.stock);
             });
         }
-        function actualizar_epp(id) {
-            $.post("php/services.php?accion=actualizar_epp", {
+        function actualizar_material(id) {
+            $.post("php/services.php?accion=actualizar_material", {
                 descripcion: $("#descripcion").val(),
                 stock: $("#stock").val(),
                 id: id
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_epps();
+                    lista_materiales();
                     limpiar();
                 } else {
 
                 }
             });
         }
-        function eliminar_epp(id) {
+        function eliminar_material(id) {
             bootbox.confirm('¿Estás seguro?',
                 function (result) {
-                    $.post("php/services.php?accion=eliminar_epp", {
+                    $.post("php/services.php?accion=eliminar_material", {
                         id: id,
                     }, function (responseText) {
                         var obj = JSON.parse(responseText);
                         if (obj.Result == "OK") {
-                            lista_epps();
+                            lista_materiales();
                         } else {
 
                         }

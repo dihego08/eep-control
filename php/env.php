@@ -1,8 +1,8 @@
 <?php
     Class Connection {
         private  $server = "mysql:host=localhost;dbname=db_epp";
-        private  $user = 'root';
-        private  $pass = 'root';
+        private  $user = 'daranibar';
+        private  $pass = 'daranibar';
         private $options  = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES  \'UTF8\'');
         protected $con;
         public function openConnection(){

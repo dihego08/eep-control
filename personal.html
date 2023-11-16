@@ -130,7 +130,7 @@
                         <div class="bg-light rounded h-100 p-4">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-4">Listado Epps</h6>
+                                    <h6 class="mb-4">Listado Personal</h6>
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <span class="btn btn-outline-success" data-bs-toggle="modal"
@@ -138,12 +138,14 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table class="table" id="table-epps">
+                                <table class="table" id="table-personal">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Descripción</th>
-                                            <th scope="col">Stock</th>
+                                            <th scope="col">Nombres</th>
+                                            <th scope="col">Puesto</th>
+                                            <th scope="col">Celular</th>
+                                            <th scope="col">Correo</th>
                                             <th scope="col" class="text-center">Acciones</th>
                                         </tr>
                                     </thead>
@@ -184,7 +186,7 @@
         <div class="modal-dialog" role="document" style="max-width: 45%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Formulario EPP</h3>
+                    <h3 class="modal-title" id="exampleModalLabel">Formulario Personal</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -192,12 +194,23 @@
                         <div class="form-row">
                             <div class="col-12 forn-row" id="myelement">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="descripcion" placeholder="Nombre Epp">
-                                    <label for="descripcion">Descripción</label>
+                                    <input type="text" class="form-control" id="nombres"
+                                        placeholder="Nombre Completo">
+                                    <label for="nombres">Nombre Completo</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="stock" placeholder="Ex: 1">
-                                    <label for="stock">Stock Inicial</label>
+                                    <select class="form-select mb-3" aria-label="Default select example" id="id_puesto">
+                                        <option selected="">--SELECCIONA--</option>
+                                    </select>
+                                    <label for="id_puesto">Puesto</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="celular" placeholder="Ex: 1">
+                                    <label for="celular">Celular</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="correo" placeholder="Ex: 1">
+                                    <label for="correo">Correo</label>
                                 </div>
                             </div>
                         </div>
@@ -205,7 +218,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row">
-                        <span class="btn btn-outline-success" id="btn-accion-epp">
+                        <span class="btn btn-outline-success" id="btn-accion-personal">
                             <i class="fas fa-check"></i> Guardar
                         </span>
                     </div>
@@ -231,22 +244,32 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        function lista_epps() {
-            $("#table-epps").find("tbody").empty();
-            $.post("php/services.php?accion=lista_epps", function (responseText) {
+        function lista_puestos() {
+            $.post("php/services.php?accion=lista_puestos", function (responseText) {
                 var obj = JSON.parse(responseText);
                 $.each(obj, function (index, val) {
-                    $("#table-epps").find("tbody").append(`<tr>
+                    $("#id_puesto").append(`<option value="${val.id}">${val.descripcion}</option>`);
+                });
+            });
+        }
+        function lista_personal() {
+            $("#table-personal").find("tbody").empty();
+            $.post("php/services.php?accion=lista_personal", function (responseText) {
+                var obj = JSON.parse(responseText);
+                $.each(obj, function (index, val) {
+                    $("#table-personal").find("tbody").append(`<tr>
                         <th scope="row">${val.id}</th>
-                        <td>${val.descripcion}</td>
-                        <td>${val.stock}</td>
+                        <td>${val.nombres}</td>
+                        <td>${val.puesto}</td>
+                        <td>${val.celular}</td>
+                        <td>${val.correo}</td>
                         <td class="text-center">
                             <div class="form-group">
-                                <span class="btn btn-outline-warning btn-square" onclick="editar_epp(${val.id})" data-bs-toggle="modal"
+                                <span class="btn btn-outline-warning btn-square" onclick="editar_personal(${val.id})" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">
                                     <i class="fas fa-edit"></i>
                                 </span>
-                                <span class="btn btn-outline-danger btn-square" onclick="eliminar_epp(${val.id})">
+                                <span class="btn btn-outline-danger btn-square" onclick="eliminar_personal(${val.id})">
                                     <i class="fas fa-trash"></i>
                                 </span>
                             </div>
@@ -256,65 +279,74 @@
             });
         }
         $(document).ready(function () {
-            lista_epps();
+            lista_personal();
+            lista_puestos();
             limpiar();
         });
-        function guardar_epp() {
-            $.post("php/services.php?accion=guardar_epp", {
-                descripcion: $("#descripcion").val(),
-                stock: $("#stock").val(),
+        function guardar_personal() {
+            $.post("php/services.php?accion=guardar_personal", {
+                nombres: $("#nombres").val(),
+                id_puesto: $("#id_puesto").val(),
+                celular: $("#celular").val(),
+                correo: $("#correo").val(),
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_epps();
+                    lista_personal();
                 } else {
 
                 }
             });
         }
         function limpiar() {
-            $("#btn-accion-epp").attr("onclick", "guardar_epp();");
-            $("#btn-accion-epp").empty();
-            $("#btn-accion-epp").append('<i class="fas fa-plus"></i> Guardar');
-            $("#descripcion").val('');
-            $("#stock").val('');
+            $("#btn-accion-personal").attr("onclick", "guardar_personal();");
+            $("#btn-accion-personal").empty();
+            $("#btn-accion-personal").append('<i class="fas fa-plus"></i> Guardar');
+            $("#nombres").val('');
+            $("#celular").val('');
+            $("#correo").val('');
+            $("#id_puesto").val(0);
         }
-        function editar_epp(id) {
-            $("#btn-accion-epp").attr("onclick", "actualizar_epp(" + id + ");");
-            $("#btn-accion-epp").empty();
-            $("#btn-accion-epp").append('<i class="fas fa-check"></i> Actualizar');
-            $.post("php/services.php?accion=editar_epp", {
+        function editar_personal(id) {
+            $("#btn-accion-personal").attr("onclick", "actualizar_personal(" + id + ");");
+            $("#btn-accion-personal").empty();
+            $("#btn-accion-personal").append('<i class="fas fa-check"></i> Actualizar');
+            $.post("php/services.php?accion=editar_personal", {
                 id: id,
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
-                $("#descripcion").val(obj.descripcion);
-                $("#stock").val(obj.stock);
+                $("#nombres").val(obj.nombres);
+                $("#id_puesto").val(obj.id_puesto);
+                $("#celular").val(obj.celular);
+                $("#correo").val(obj.correo);
             });
         }
-        function actualizar_epp(id) {
-            $.post("php/services.php?accion=actualizar_epp", {
-                descripcion: $("#descripcion").val(),
-                stock: $("#stock").val(),
+        function actualizar_personal(id) {
+            $.post("php/services.php?accion=actualizar_personal", {
+                nombres: $("#nombres").val(),
+                id_puesto: $("#id_puesto").val(),
+                celular: $("#celular").val(),
+                correo: $("#correo").val(),
                 id: id
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_epps();
+                    lista_personal();
                     limpiar();
                 } else {
 
                 }
             });
         }
-        function eliminar_epp(id) {
+        function eliminar_personal(id) {
             bootbox.confirm('¿Estás seguro?',
                 function (result) {
-                    $.post("php/services.php?accion=eliminar_epp", {
+                    $.post("php/services.php?accion=eliminar_personal", {
                         id: id,
                     }, function (responseText) {
                         var obj = JSON.parse(responseText);
                         if (obj.Result == "OK") {
-                            lista_epps();
+                            lista_personal();
                         } else {
 
                         }
