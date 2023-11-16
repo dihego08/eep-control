@@ -68,7 +68,7 @@
                     <a href="index.html" class="nav-item nav-link"><i
                             class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i
                                 class="fa fa-laptop me-2"></i>Control</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="epps.html" class="dropdown-item">Epps</a>
@@ -80,7 +80,7 @@
                         </div>
                     </div>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i
+                        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i
                                 class="fa fa-laptop me-2"></i>Movimientos</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="eppsm.html" class="dropdown-item">Epps</a>
@@ -270,7 +270,7 @@
                 });
             });
         }
-        function lista_personal(){
+        function lista_personal() {
             $.post("php/services.php?accion=lista_personal", function (responseText) {
                 var obj = JSON.parse(responseText);
                 $.each(obj, function (index, val) {
@@ -283,10 +283,18 @@
             $.post("php/services.php?accion=lista_movimientos_epp", function (responseText) {
                 var obj = JSON.parse(responseText);
                 $.each(obj, function (index, val) {
+                    var cls = "";
+                    if (val.factor < 0) {
+                        cls = "class = 'badge text-danger'";
+                    } else {
+                        cls = "class = 'badge text-success'";
+                    }
                     $("#table-epps").find("tbody").append(`<tr>
                         <th scope="row">${val.id}</th>
                         <td>${val.epp}</td>
-                        <td>${val.tipo_movimiento}</td>
+                        <td>
+                            <span ${cls}>${val.tipo_movimiento}</span>
+                        </td>
                         <td>${val.fecha}</td>
                         <td>${val.stock_inicial}</td>
                         <td>${val.cantidad}</td>

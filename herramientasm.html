@@ -130,7 +130,7 @@
                         <div class="bg-light rounded h-100 p-4">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-4">Listado Movimientos Equipos</h6>
+                                    <h6 class="mb-4">Listado Movimientos Herramientas</h6>
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <span class="btn btn-outline-success" data-bs-toggle="modal"
@@ -138,7 +138,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table class="table" id="table-equipos">
+                                <table class="table" id="table-movimientos-herramientas">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
@@ -189,7 +189,7 @@
         <div class="modal-dialog" role="document" style="max-width: 45%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Formulario Movimientos Equipos</h3>
+                    <h3 class="modal-title" id="exampleModalLabel">Formulario Movimientos Herramientas</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -197,10 +197,10 @@
                         <div class="form-row">
                             <div class="col-12 forn-row" id="myelement">
                                 <div class="form-floating mb-3">
-                                    <select class="form-select" id="id_equipo">
+                                    <select class="form-select" id="id_herramienta">
                                         <option value="0">--SELECCIONA--</option>
                                     </select>
-                                    <label for="id_equipo">Seleccionar Equipo</label>
+                                    <label for="id_herramienta">Seleccionar Herramienta</label>
                                 </div>
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="id_tipo_movimiento">
@@ -228,7 +228,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row">
-                        <span class="btn btn-outline-success" id="btn-accion-movimientos-equipos">
+                        <span class="btn btn-outline-success" id="btn-accion-movimientos-herramientas">
                             <i class="fas fa-check"></i> Guardar
                         </span>
                     </div>
@@ -254,11 +254,11 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        function lista_equipos() {
-            $.post("php/services.php?accion=lista_equipos", function (responseText) {
+        function lista_herramientas() {
+            $.post("php/services.php?accion=lista_herramientas", function (responseText) {
                 var obj = JSON.parse(responseText);
                 $.each(obj, function (index, val) {
-                    $("#id_equipo").append(`<option value="${val.id}">${val.descripcion}</option>`);
+                    $("#id_herramienta").append(`<option value="${val.id}">${val.descripcion}</option>`);
                 });
             });
         }
@@ -278,9 +278,9 @@
                 });
             });
         }
-        function lista_movimientos_equipos() {
-            $("#table-equipos").find("tbody").empty();
-            $.post("php/services.php?accion=lista_movimientos_equipos", function (responseText) {
+        function lista_movimientos_herramientas() {
+            $("#table-movimientos-herramientas").find("tbody").empty();
+            $.post("php/services.php?accion=lista_movimientos_herramientas", function (responseText) {
                 var obj = JSON.parse(responseText);
                 $.each(obj, function (index, val) {
                     var cls = "";
@@ -289,9 +289,9 @@
                     } else {
                         cls = "class = 'badge text-success'";
                     }
-                    $("#table-equipos").find("tbody").append(`<tr>
+                    $("#table-movimientos-herramientas").find("tbody").append(`<tr>
                         <th scope="row">${val.id}</th>
-                        <td>${val.equipo}</td>
+                        <td>${val.herramienta}</td>
                         <td>
                             <span ${cls}>${val.tipo_movimiento}</span>
                         </td>
@@ -316,15 +316,15 @@
             });
         }
         $(document).ready(function () {
-            lista_movimientos_equipos();
-            lista_equipos();
+            lista_movimientos_herramientas();
+            lista_herramientas();
             lista_personal();
             lista_tipos_movimientos();
             limpiar();
         });
-        function guardar_movimiento_equipos() {
-            $.post("php/services.php?accion=guardar_movimiento_equipos", {
-                id_equipo: $("#id_equipo").val(),
+        function guardar_movimiento_herramientas() {
+            $.post("php/services.php?accion=guardar_movimiento_herramientas", {
+                id_herramienta: $("#id_herramienta").val(),
                 id_personal: $("#id_personal").val(),
                 fecha: $("#fecha").val(),
                 cantidad: $("#cantidad").val(),
@@ -332,25 +332,25 @@
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_movimientos_equipos();
+                    lista_movimientos_herramientas();
                 } else {
 
                 }
             });
         }
         function limpiar() {
-            $("#btn-accion-movimientos-equipos").attr("onclick", "guardar_movimiento_equipos();");
-            $("#btn-accion-movimientos-equipos").empty();
-            $("#btn-accion-movimientos-equipos").append('<i class="fas fa-plus"></i> Guardar');
-            $("#id_equipo").val(0);
+            $("#btn-accion-movimientos-herramientas").attr("onclick", "guardar_movimiento_herramientas();");
+            $("#btn-accion-movimientos-herramientas").empty();
+            $("#btn-accion-movimientos-herramientas").append('<i class="fas fa-plus"></i> Guardar');
+            $("#id_herramienta").val(0);
             $("#id_personal").val(0);
             $("#cantidad").val('');
             $("#fecha").val('');
         }
         function editar_epp(id) {
-            $("#btn-accion-movimientos-equipos").attr("onclick", "actualizar_epp(" + id + ");");
-            $("#btn-accion-movimientos-equipos").empty();
-            $("#btn-accion-movimientos-equipos").append('<i class="fas fa-check"></i> Actualizar');
+            $("#btn-accion-movimientos-herramientas").attr("onclick", "actualizar_epp(" + id + ");");
+            $("#btn-accion-movimientos-herramientas").empty();
+            $("#btn-accion-movimientos-herramientas").append('<i class="fas fa-check"></i> Actualizar');
             $.post("php/services.php?accion=editar_epp", {
                 id: id,
             }, function (responseText) {
@@ -367,7 +367,7 @@
             }, function (responseText) {
                 var obj = JSON.parse(responseText);
                 if (obj.Result == "OK") {
-                    lista_movimientos_equipos();
+                    lista_movimientos_herramientas();
                     limpiar();
                 } else {
 
@@ -382,7 +382,7 @@
                     }, function (responseText) {
                         var obj = JSON.parse(responseText);
                         if (obj.Result == "OK") {
-                            lista_movimientos_equipos();
+                            lista_movimientos_herramientas();
                         } else {
 
                         }

@@ -337,7 +337,7 @@ class clsEpp
         );
     }
     function lista_movimientos_epp(){
-        $query = $this->mbd->prepare("SELECT m.*, p.nombres, tm.descripcion as tipo_movimiento, e.descripcion as epp from tbl_movimientos_epps AS m join tbl_epp AS e on m.id_epp = e.id JOIN tbl_tipos_movimientos as tm on m.id_tipo_movimiento = tm.id JOIN tbl_personal p ON m.id_personal = p.id WHERE e.marca_baja = 0;");
+        $query = $this->mbd->prepare("SELECT m.*, p.nombres, tm.descripcion as tipo_movimiento, e.descripcion as epp, tm.factor from tbl_movimientos_epps AS m join tbl_epp AS e on m.id_epp = e.id JOIN tbl_tipos_movimientos as tm on m.id_tipo_movimiento = tm.id JOIN tbl_personal p ON m.id_personal = p.id WHERE e.marca_baja = 0;");
         $query->execute();
         $values = array();
         while ($res = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -394,6 +394,65 @@ class clsEpp
 
         $query = $this->mbd->prepare("UPDATE tbl_equipos SET stock = stock + (:cantidad * (SELECT factor FROM tbl_tipos_movimientos WHERE id = :id_tipo_movimiento)) WHERE id = :id");
         $query->bindParam(":id", $POST['id_equipo']);
+        $query->bindParam(":cantidad", $POST['cantidad']);
+        $query->bindParam(":id_tipo_movimiento", $POST['id_tipo_movimiento']);
+        $query->execute();
+        return json_encode(
+            array(
+                "Result" => "OK"
+            )
+        );
+    }
+    function lista_movimientos_materiales(){
+        $query = $this->mbd->prepare("SELECT m.*, p.nombres, tm.descripcion as tipo_movimiento, e.descripcion as material from tbl_movimientos_materiales AS m join tbl_materiales AS e on m.id_material = e.id JOIN tbl_tipos_movimientos as tm on m.id_tipo_movimiento = tm.id JOIN tbl_personal p ON m.id_personal = p.id WHERE e.marca_baja = 0;");
+        $query->execute();
+        $values = array();
+        while ($res = $query->fetch(PDO::FETCH_ASSOC)) {
+            $values[] = $res;
+        }
+        return json_encode($values);
+    }
+    function guardar_movimiento_materiales($POST){
+        $query = $this->mbd->prepare("INSERT INTO tbl_movimientos_materiales(id_material, fecha, cantidad, id_tipo_movimiento, id_personal, usuario, marca_baja, stock_inicial, stock_final) VALUES (:id_material, :fecha, :cantidad, :id_tipo_movimiento, :id_personal, 1, 0, (SELECT stock FROM tbl_materiales WHERE id = :id_material), (SELECT stock FROM tbl_materiales WHERE id = :id_material) + (:cantidad * (SELECT factor FROM tbl_tipos_movimientos WHERE id = :id_tipo_movimiento)))");
+        $query->bindParam(":id_material", $POST['id_material']);
+        $query->bindParam(":fecha", $POST['fecha']);
+        $query->bindParam(":cantidad", $POST['cantidad']);
+        $query->bindParam(":id_tipo_movimiento", $POST['id_tipo_movimiento']);
+        $query->bindParam(":id_personal", $POST['id_personal']);
+        $query->execute();
+
+        $query = $this->mbd->prepare("UPDATE tbl_materiales SET stock = stock + (:cantidad * (SELECT factor FROM tbl_tipos_movimientos WHERE id = :id_tipo_movimiento)) WHERE id = :id");
+        $query->bindParam(":id", $POST['id_material']);
+        $query->bindParam(":cantidad", $POST['cantidad']);
+        $query->bindParam(":id_tipo_movimiento", $POST['id_tipo_movimiento']);
+        $query->execute();
+        return json_encode(
+            array(
+                "Result" => "OK"
+            )
+        );
+    }
+
+    function lista_movimientos_herramientas(){
+        $query = $this->mbd->prepare("SELECT m.*, p.nombres, tm.descripcion as tipo_movimiento, e.descripcion as herramienta from tbl_movimientos_herramientas AS m join tbl_herramientas AS e on m.id_herramienta = e.id JOIN tbl_tipos_movimientos as tm on m.id_tipo_movimiento = tm.id JOIN tbl_personal p ON m.id_personal = p.id WHERE e.marca_baja = 0;");
+        $query->execute();
+        $values = array();
+        while ($res = $query->fetch(PDO::FETCH_ASSOC)) {
+            $values[] = $res;
+        }
+        return json_encode($values);
+    }
+    function guardar_movimiento_herramientas($POST){
+        $query = $this->mbd->prepare("INSERT INTO tbl_movimientos_herramientas(id_herramienta, fecha, cantidad, id_tipo_movimiento, id_personal, usuario, marca_baja, stock_inicial, stock_final) VALUES (:id_herramienta, :fecha, :cantidad, :id_tipo_movimiento, :id_personal, 1, 0, (SELECT stock FROM tbl_herramientas WHERE id = :id_herramienta), (SELECT stock FROM tbl_herramientas WHERE id = :id_herramienta) + (:cantidad * (SELECT factor FROM tbl_tipos_movimientos WHERE id = :id_tipo_movimiento)))");
+        $query->bindParam(":id_herramienta", $POST['id_herramienta']);
+        $query->bindParam(":fecha", $POST['fecha']);
+        $query->bindParam(":cantidad", $POST['cantidad']);
+        $query->bindParam(":id_tipo_movimiento", $POST['id_tipo_movimiento']);
+        $query->bindParam(":id_personal", $POST['id_personal']);
+        $query->execute();
+
+        $query = $this->mbd->prepare("UPDATE tbl_herramientas SET stock = stock + (:cantidad * (SELECT factor FROM tbl_tipos_movimientos WHERE id = :id_tipo_movimiento)) WHERE id = :id");
+        $query->bindParam(":id", $POST['id_herramienta']);
         $query->bindParam(":cantidad", $POST['cantidad']);
         $query->bindParam(":id_tipo_movimiento", $POST['id_tipo_movimiento']);
         $query->execute();
